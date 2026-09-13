@@ -20,12 +20,12 @@ project:
             - file: "chapters/linear_systems/matrix_properties/norms.ipynb"
             - file: "chapters/linear_systems/matrix_properties/conditioning.ipynb"
             - file: "chapters/linear_systems/matrix_properties/complexity.ipynb"
+            - file: "chapters/linear_systems/matrix_properties/matrix_types_and_sparsity.ipynb"
         - file: "chapters/linear_systems/direct_methods/direct_methods.ipynb"
           children: 
             - file: "chapters/linear_systems/direct_methods/gaussian_elimination.ipynb"
             - file: "chapters/linear_systems/direct_methods/diagonal_dominance_and_pivoting.ipynb"
             - file: "chapters/linear_systems/direct_methods/lu_decomposition.ipynb"
-            - file: "chapters/linear_systems/direct_methods/matrix_types_and_sparsity.ipynb"
         - file: "chapters/linear_systems/iterative_methods/iterative_methods.ipynb"
           children: 
             - file: "chapters/linear_systems/iterative_methods/stationary_methods.ipynb"

@@ -13,8 +13,11 @@ description: "Description of the formatting rule"
 - **Cross-Environment Execution**: 
   - All pages must include a Colab markdown badge immediately below the main `# Title` in the first markdown cell: `[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/themintlab/ExecutableEngineering/blob/main/...)`
   - Do not assume packages are pre-installed in the cloud. Avoid heavy C-compiled dependencies unsupported by Pyodide/JupyterLite.
-  - Every notebook requiring the course package must include this exact setup cell (immediately following the Colab badge). Do NOT hide this cell; students should see the environment setup:
+  - All required `import` statements (e.g., `numpy`, `plotly`) MUST be grouped together in a single code block located directly after the main `# Title` and Colab badge. This block must include the `executable_engineering` setup and must NOT be hidden. Example:
     ```python
+    import numpy as np
+    import plotly.graph_objects as go
+    
     try:
         import executable_engineering as exe
     except ImportError:
