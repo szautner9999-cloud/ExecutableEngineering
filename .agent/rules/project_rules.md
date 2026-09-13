@@ -7,20 +7,19 @@ description: "Description of the formatting rule"
 
 - **Stack**: Jupyter Book `==2.1.6` (MyST ecosystem). Config: `myst.yml`, `toc.yml`. No `_config.yml`/`_toc.yml`. Do NOT downgrade jupyter-book.
 - **Monorepo**: Contains book (`Chapters/`, `index.md`) & package (`executable_engineering`).
+- **Folder Structure**: When creating a new section or chapter directory, the introductory file for that section must be placed *inside* its corresponding subfolder (e.g., `direct_methods/direct_methods.ipynb`), not outside in the parent directory. This keeps component logic modular and prevents filename collisions.
 - **Package**: PyPI & local name is `executable_engineering`. Local dev: `-e ./executable_engineering`. Colab: `pip install executable_engineering`. Build: `python -m build ./executable_engineering`.
 - **Interactivity**: Core philosophy: interactive numerical methods. PREFER `plotly` for all plotting. Use `ipywidgets`, `numpy`, `scipy`. (Use `matplotlib` only when static output is strictly required).
 - **Cross-Environment Execution**: 
   - All pages must include a Colab markdown badge immediately below the main `# Title` in the first markdown cell: `[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/themintlab/ExecutableEngineering/blob/main/...)`
   - Do not assume packages are pre-installed in the cloud. Avoid heavy C-compiled dependencies unsupported by Pyodide/JupyterLite.
-  - Every notebook requiring the course package must include this exact hidden setup cell (immediately following the Colab badge). This prevents breaking local editable installs while supporting Colab and JupyterLite (via micropip):
+  - Every notebook requiring the course package must include this exact setup cell (immediately following the Colab badge). Do NOT hide this cell; students should see the environment setup:
     ```python
-    # | tags: [remove-cell]
     try:
         import executable_engineering as exe
     except ImportError:
         %pip install -q executable_engineering
         import executable_engineering as exe
-
     ```
 - **Git**: NEVER commit `_build/`, `.venv/`, `.ipynb_checkpoints/`, or `__pycache__/`.
 - **CI/CD**: GitHub Actions deploys to GitHub Pages from `main`. Do not commit built HTML files.
