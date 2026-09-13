@@ -26,6 +26,7 @@ project:
             - file: "chapters/linear_systems/direct_methods/gaussian_elimination.ipynb"
             - file: "chapters/linear_systems/direct_methods/diagonal_dominance_and_pivoting.ipynb"
             - file: "chapters/linear_systems/direct_methods/lu_decomposition.ipynb"
+            - file: "chapters/linear_systems/direct_methods/summary_on_direct_solvers.ipynb"
         - file: "chapters/linear_systems/iterative_methods/iterative_methods.ipynb"
           children: 
             - file: "chapters/linear_systems/iterative_methods/stationary_methods.ipynb"
