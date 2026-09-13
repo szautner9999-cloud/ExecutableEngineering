@@ -167,3 +167,53 @@ def visualize_conditioning(A):
     )
     
     return fig
+
+
+def visualize_matrix_norms(A):
+    """
+    Visualizes matrix norms by plotting the transformation of a unit circle
+    and overlaying bounding circles based on different matrix norms.
+    
+    Args:
+        A: (2, 2) array-like matrix
+    """
+    import numpy as np
+    import plotly.graph_objects as go
+    
+    A = np.array(A, dtype=float)
+    if A.shape != (2, 2):
+        raise ValueError("visualize_matrix_norms requires a 2x2 matrix.")
+        
+    # 1. Calculate the norms
+    norm_2 = np.linalg.norm(A, ord=2)
+    norm_F = np.linalg.norm(A, ord='fro')
+    norm_inf = np.linalg.norm(A, ord=np.inf)
+    
+    # 2. Transform the unit circle
+    theta = np.linspace(0, 2*np.pi, 200)
+    circle = np.array([np.cos(theta), np.sin(theta)])
+    ellipse = A @ circle
+    
+    # 3. Create circles for the norms
+    circle_2 = norm_2 * circle
+    circle_F = norm_F * circle
+    circle_inf = norm_inf * circle
+    
+    # 4. Plot!
+    fig = go.Figure()
+    
+    # Plot the transformed ellipse
+    fig.add_trace(go.Scatter(x=ellipse[0], y=ellipse[1], mode='lines', name='A * Unit Circle (Ellipse)', line=dict(color='blue', width=3)))
+    
+    # Plot the norm bounding circles
+    fig.add_trace(go.Scatter(x=circle_2[0], y=circle_2[1], mode='lines', name=f'2-Norm (Radius {norm_2:.2f})', line=dict(color='green', dash='dash')))
+    fig.add_trace(go.Scatter(x=circle_F[0], y=circle_F[1], mode='lines', name=f'Frobenius Norm (Radius {norm_F:.2f})', line=dict(color='orange', dash='dash')))
+    fig.add_trace(go.Scatter(x=circle_inf[0], y=circle_inf[1], mode='lines', name=f'Infinity Norm (Radius {norm_inf:.2f})', line=dict(color='red', dash='dash')))
+    
+    # Setup axes
+    max_val = norm_inf * 1.1
+    fig.update_xaxes(range=[-max_val, max_val])
+    fig.update_yaxes(range=[-max_val, max_val], scaleanchor="x", scaleratio=1)
+    fig.update_layout(title="Matrix Norms as Bounds on Geometric Distortion", width=700, height=700)
+    
+    return fig

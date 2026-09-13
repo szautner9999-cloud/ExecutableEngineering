@@ -15,6 +15,7 @@ project:
     - file: "chapters/linear_systems/linear_systems.ipynb"
       children:
         - file: "chapters/linear_systems/solvability.ipynb"
+        - file: "chapters/linear_systems/norms.ipynb"
         - file: "chapters/linear_systems/conditioning.ipynb"
         - file: "chapters/linear_systems/complexity.ipynb"
         - file: "chapters/linear_systems/direct_methods.ipynb"
