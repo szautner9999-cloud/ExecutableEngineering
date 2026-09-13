@@ -28,6 +28,7 @@ project:
             - file: "chapters/linear_systems/iterative_methods/stationary_methods.ipynb"
             - file: "chapters/linear_systems/iterative_methods/krylov_subspace_methods.ipynb"
             - file: "chapters/linear_systems/iterative_methods/preconditioners.ipynb"
+        - file: "chapters/linear_systems/pseudoinverse.ipynb"
 
     - file: "chapters/interpolation_and_curve_fitting/interpolation_and_curve_fitting.ipynb"
       children:
@@ -39,7 +40,6 @@ project:
             - file: "chapters/interpolation_and_curve_fitting/interpolation/summary_of_interpolation.ipynb"
         - file: "chapters/interpolation_and_curve_fitting/curve_fitting/curve_fitting.ipynb"
           children:
-            - file: "chapters/interpolation_and_curve_fitting/curve_fitting/linear_least_squares_regression.ipynb"
             - file: "chapters/interpolation_and_curve_fitting/curve_fitting/weighted_linear_least_squares.ipynb"
             - file: "chapters/interpolation_and_curve_fitting/curve_fitting/polyfit.ipynb"
             - file: "chapters/interpolation_and_curve_fitting/curve_fitting/best_fit_radial_basis_functions.ipynb"
