@@ -1,8 +1,9 @@
 import numpy as np
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 import plotly.colors as pcolors
 
-def visual_solve_2d(A, b, method='pseudo'):
+def visual_solve_2d(A, b, method='exact'):
     """
     Solves and visualizes a 2D linear system Ax = b.
     Plots the lines represented by the rows of A and b, and the solution point.
@@ -96,6 +97,73 @@ def visual_solve_2d(A, b, method='pseudo'):
         width=700,
         height=500,
         margin=dict(l=20, r=20, t=50, b=20)
+    )
+    
+    return fig
+
+
+def visualize_conditioning(A):
+    """
+    Visualizes the effect of the condition number by applying the matrix transformation
+    and its inverse to the unit circle.
+    
+    Args:
+        A: (2, 2) array-like matrix
+    """
+    A = np.array(A, dtype=float)
+    if A.shape != (2, 2):
+        raise ValueError("visualize_conditioning requires a 2x2 matrix.")
+        
+    # Create the unit circle
+    theta = np.linspace(0, 2*np.pi, 200)
+    circle = np.array([np.cos(theta), np.sin(theta)])
+    
+    # Apply transformation A to the unit circle
+    transformed_A = A @ circle
+    
+    # Check if invertible, if so, apply A^-1 to the unit circle
+    try:
+        A_inv = np.linalg.inv(A)
+        transformed_Ainv = A_inv @ circle
+        cond = np.linalg.cond(A)
+        subtitle = f"Condition Number: {cond:.2f}"
+    except np.linalg.LinAlgError:
+        transformed_Ainv = np.zeros_like(circle)
+        subtitle = "Matrix is singular (Condition Number: ∞)"
+        
+    fig = make_subplots(
+        rows=1, cols=2, 
+        subplot_titles=(f"Forward Transformation (A*x)", f"Inverse Transformation (A⁻¹*b)"),
+        horizontal_spacing=0.1
+    )
+    
+    # Subplot 1: Forward transformation
+    fig.add_trace(go.Scatter(x=circle[0], y=circle[1], mode='lines', name='Unit Circle', line=dict(color='gray', dash='dash')), row=1, col=1)
+    fig.add_trace(go.Scatter(x=transformed_A[0], y=transformed_A[1], mode='lines', name='A * Circle', line=dict(color='blue')), row=1, col=1)
+    
+    # Subplot 2: Inverse transformation
+    fig.add_trace(go.Scatter(x=circle[0], y=circle[1], mode='lines', name='Unit Circle', line=dict(color='gray', dash='dash'), showlegend=False), row=1, col=2)
+    fig.add_trace(go.Scatter(x=transformed_Ainv[0], y=transformed_Ainv[1], mode='lines', name='A⁻¹ * Circle', line=dict(color='red')), row=1, col=2)
+    
+    # Update axes to be equal aspect ratio
+    max_A = np.max(np.abs(transformed_A)) * 1.1 if np.max(np.abs(transformed_A)) > 0 else 1
+    max_Ainv = np.max(np.abs(transformed_Ainv)) * 1.1 if np.max(np.abs(transformed_Ainv)) > 0 else 1
+    
+    # Ensure they are at least 1.1 so the unit circle is visible
+    max_A = max(max_A, 1.1)
+    max_Ainv = max(max_Ainv, 1.1)
+    
+    fig.update_xaxes(range=[-max_A, max_A], row=1, col=1)
+    fig.update_yaxes(range=[-max_A, max_A], scaleanchor="x", scaleratio=1, row=1, col=1)
+    
+    fig.update_xaxes(range=[-max_Ainv, max_Ainv], row=1, col=2)
+    fig.update_yaxes(range=[-max_Ainv, max_Ainv], scaleanchor="x2", scaleratio=1, row=1, col=2)
+    
+    fig.update_layout(
+        title=f"Visualizing Matrix Distortion ({subtitle})",
+        width=900,
+        height=500,
+        margin=dict(l=20, r=20, t=60, b=20)
     )
     
     return fig

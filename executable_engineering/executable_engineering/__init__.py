@@ -5,10 +5,11 @@ from .closedoptimization_module import OptimizerClosed
 from .openoptimization_module import OptimizerOpen
 from .gradientoptimization_module import OptimizerGrad
 from .numerical_error_module import python_internal_binary, decimal_to_binary
-from .linearsystems_module import visual_solve_2d
+from .linearsystems_module import visual_solve_2d, visualize_conditioning
 
 __all__ = [
   "visual_solve_2d",
+  "visualize_conditioning",
   "init_weights",
   "tanh",
   "tanh_derivative",
