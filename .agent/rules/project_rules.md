@@ -1,6 +1,6 @@
 ---
-description: "Description of the formatting rule"
 trigger: always_on
+description: "Description of the formatting rule"
 ---
 
 # Agent Rules
