@@ -16,9 +16,11 @@ description: "Description of the formatting rule"
     ```python
     # | tags: [remove-cell]
     try:
-        import executable_engineering
+        import executable_engineering as exe
     except ImportError:
         %pip install -q executable_engineering
+        import executable_engineering as exe
+
     ```
 - **Git**: NEVER commit `_build/`, `.venv/`, `.ipynb_checkpoints/`, or `__pycache__/`.
 - **CI/CD**: GitHub Actions deploys to GitHub Pages from `main`. Do not commit built HTML files.
