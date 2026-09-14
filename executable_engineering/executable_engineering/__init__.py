@@ -5,7 +5,7 @@ from .closedoptimization_module import OptimizerClosed
 from .openoptimization_module import OptimizerOpen
 from .gradientoptimization_module import OptimizerGrad
 from .numerical_error_module import python_internal_binary, decimal_to_binary
-from .linearsystems_module import visual_solve_2d, visualize_conditioning, visualize_matrix_norms, jacobi_step, gauss_seidel_step, sor_step, visualize_convergence_2d, create_diagonally_dominant_matrix, iter_solve, steepest_descent, conjugate_gradient
+from .linearsystems_module import visual_solve_2d, visualize_conditioning, visualize_matrix_norms, jacobi_step, gauss_seidel_step, sor_step, visualize_convergence_2d, create_diagonally_dominant_matrix, iter_solve, steepest_descent, conjugate_gradient, IterationTracker
 
 __all__ = [
   "visual_solve_2d",
@@ -13,7 +13,7 @@ __all__ = [
   "visualize_matrix_norms",
   "jacobi_step",
   "gauss_seidel_step",
-  "sor_step, visualize_convergence_2d, create_diagonally_dominant_matrix, iter_solve, steepest_descent, conjugate_gradient",
+  "sor_step, visualize_convergence_2d, create_diagonally_dominant_matrix, iter_solve, steepest_descent, conjugate_gradient, IterationTracker",
   "init_weights",
   "tanh",
   "tanh_derivative",

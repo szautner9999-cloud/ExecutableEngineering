@@ -337,13 +337,7 @@ def visualize_convergence_2d(A, b, iterations, surface_type='residual'):
             name='Iterations'
         ))
     
-    # True solution
-    fig.add_trace(go.Scatter(
-        x=[x_true[0]], y=[x_true[1]],
-        mode='markers',
-        marker=dict(symbol='star', size=16, color='gold', line=dict(color='black', width=1)),
-        name='True Solution'
-    ))
+
     
     fig.update_layout(
         title=title,
@@ -431,3 +425,18 @@ def conjugate_gradient(A, b, x0, tol=1e-6, track_history=False):
     else:
         solution, info = cg(A, b, x0=x0, tol=tol)
         return solution
+
+class IterationTracker:
+    """
+    A clean callback tracker for native SciPy solvers (cg, gmres, etc.).
+    """
+    def __init__(self, x0=None):
+        import numpy as np
+        if x0 is not None:
+            self.iterations = [np.array(x0).copy()]
+        else:
+            self.iterations = []
+
+    def __call__(self, xk):
+        import numpy as np
+        self.iterations.append(np.array(xk).copy())
