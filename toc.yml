@@ -32,6 +32,7 @@ project:
             - file: "chapters/linear_systems/iterative_methods/stationary_methods.ipynb"
             - file: "chapters/linear_systems/iterative_methods/krylov_subspace_methods.ipynb"
             - file: "chapters/linear_systems/iterative_methods/preconditioners.ipynb"
+            - file: "chapters/linear_systems/iterative_methods/summary_on_iterative_methods.ipynb"
         - file: "chapters/linear_systems/generalization_the_pseudoinverse.ipynb"
 
     - file: "chapters/interpolation_and_curve_fitting/interpolation_and_curve_fitting.ipynb"

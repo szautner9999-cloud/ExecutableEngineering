@@ -217,3 +217,217 @@ def visualize_matrix_norms(A):
     fig.update_layout(title="Matrix Norms as Bounds on Geometric Distortion", width=700, height=700)
     
     return fig
+
+def jacobi_step(A, b, x):
+    """Performs a single Jacobi iteration step."""
+    n = len(x)
+    x_new = np.zeros_like(x)
+    for i in range(n):
+        x_new[i] = (b[i] - np.dot(A[i, :i], x[:i]) - np.dot(A[i, i + 1:], x[i + 1:])) / A[i, i]
+    return x_new
+
+def gauss_seidel_step(A, b, x, omega = 1):
+    """Performs a single Gauss-Seidel iteration step."""
+    n = len(x)
+    for i in range(n):
+        x[i] = (b[i] - np.dot(A[i, :i], x[:i]) - np.dot(A[i, i + 1:], x[i + 1:])) / A[i, i]
+    return x
+
+def sor_step(A, b, x, omega=1.05):
+    """Performs a single SOR iteration step."""
+    n = len(x)
+    for i in range(n):
+        x[i] = (1 - omega) * x[i] + (omega / A[i, i]) * (b[i] - np.dot(A[i, :i], x[:i]) - np.dot(A[i, i + 1:], x[i + 1:]))
+    return x
+
+def visualize_convergence_2d(A, b, iterations, surface_type='residual'):
+    """
+    Visualizes the convergence path of an iterative solver over a 2D contour surface.
+    
+    Args:
+        A: (2, 2) coefficient matrix.
+        b: (2,) right-hand side vector.
+        iterations: List or array of (2,) vectors representing the guess at each step.
+        surface_type: 'residual' plots ||Ax - b||. 'quadratic' plots 0.5 x^T A x - b^T x.
+    """
+    import numpy as np
+    import plotly.graph_objects as go
+    
+    A = np.array(A, dtype=float)
+    b = np.array(b, dtype=float).flatten()
+    iterations = np.array(iterations)
+    
+    if A.shape != (2, 2):
+        raise ValueError("visualize_convergence_2d only supports 2D systems.")
+        
+    try:
+        x_true = np.linalg.solve(A, b)
+    except np.linalg.LinAlgError:
+        x_true = np.zeros(2)
+        
+    # Determine bounds
+    all_points = np.vstack([iterations, x_true])
+    min_x, max_x = np.min(all_points[:, 0]), np.max(all_points[:, 0])
+    min_y, max_y = np.min(all_points[:, 1]), np.max(all_points[:, 1])
+    
+    # Add padding
+    pad_x = max((max_x - min_x) * 0.3, 0.5)
+    pad_y = max((max_y - min_y) * 0.3, 0.5)
+    
+    x_range = np.linspace(min_x - pad_x, max_x + pad_x, 100)
+    y_range = np.linspace(min_y - pad_y, max_y + pad_y, 100)
+    X, Y = np.meshgrid(x_range, y_range)
+    
+    if surface_type == 'residual':
+        # ||Ax - b||
+        Z = np.sqrt((A[0,0]*X + A[0,1]*Y - b[0])**2 + (A[1,0]*X + A[1,1]*Y - b[1])**2)
+        title = "Convergence Path over Residual Surface ||Ax - b||"
+    elif surface_type == 'quadratic':
+        # 0.5 x^T A x - b^T x
+        Z = 0.5 * (A[0,0]*X**2 + (A[0,1] + A[1,0])*X*Y + A[1,1]*Y**2) - (b[0]*X + b[1]*Y)
+        title = "Convergence Path over Quadratic Surface f(x)"
+    else:
+        raise ValueError("surface_type must be 'residual' or 'quadratic'")
+        
+    fig = go.Figure()
+    
+    # Contour plot
+    fig.add_trace(go.Contour(
+        x=x_range, y=y_range, z=Z,
+        colorscale='Viridis',
+        contours=dict(showlabels=True, labelfont=dict(size=12, color='white')),
+        showscale=False,
+        opacity=0.7
+    ))
+    
+    # Convergence path
+    import numpy as np
+    import plotly.express as px
+    
+    # We want to draw each segment with a color from the colormap
+    if len(iterations) > 1:
+        colors = px.colors.sample_colorscale('magma', np.linspace(0, 1, len(iterations)-1))
+        for i in range(len(iterations)-1):
+            fig.add_trace(go.Scatter(
+                x=iterations[i:i+2, 0], y=iterations[i:i+2, 1],
+                mode='lines',
+                line=dict(color=colors[i], width=3),
+                showlegend=False
+            ))
+        
+        # Add a dummy trace just to show the colorbar
+        fig.add_trace(go.Scatter(
+            x=[None], y=[None],
+            mode='markers',
+            marker=dict(
+                size=0, 
+                color=[0, len(iterations)-1], 
+                colorscale='magma', 
+                showscale=True,
+                colorbar=dict(title="Iteration", len=0.5, y=0.5, x=1.1)
+            ),
+            showlegend=False
+        ))
+    else:
+        # Just in case there is no path
+        fig.add_trace(go.Scatter(
+            x=iterations[:, 0], y=iterations[:, 1],
+            mode='markers',
+            marker=dict(size=8, color='white'),
+            name='Iterations'
+        ))
+    
+    # True solution
+    fig.add_trace(go.Scatter(
+        x=[x_true[0]], y=[x_true[1]],
+        mode='markers',
+        marker=dict(symbol='star', size=16, color='gold', line=dict(color='black', width=1)),
+        name='True Solution'
+    ))
+    
+    fig.update_layout(
+        title=title,
+        width=700, height=600,
+        xaxis_title="x₁",
+        yaxis_title="x₂",
+        yaxis=dict(scaleanchor="x", scaleratio=1),
+        margin=dict(l=20, r=20, t=50, b=20)
+    )
+    return fig
+
+def create_diagonally_dominant_matrix(n):
+    """Creates a diagonally dominant random matrix.
+
+    Args:
+        n: The size of the matrix.
+
+    Returns:
+        A diagonally dominant random matrix.
+    """
+    import numpy as np
+    A = np.random.rand(n, n)
+    for i in range(n):
+        A[i, i] = np.sum(np.abs(A[i, :])) + np.random.rand()
+    return A
+
+def iter_solve(A, b, method, tol=1e-6, track_history=False):
+    """
+    General wrapper function that repeatedly applies an iterative step 
+    until the residual error falls below a tolerance.
+    """
+    import numpy as np
+    x = np.zeros(len(b))
+    max_iter = 1000
+    
+    if track_history:
+        iterations = [x.copy()]
+
+    for i in range(max_iter):
+        x_new = method(A, b, x.copy())
+        if track_history:
+            iterations.append(x_new.copy())
+            
+        if np.linalg.norm(A @ x_new - b) < tol:
+            print(f'Converged after {i+1} iterations.')
+            break
+        x = x_new.copy()
+        
+    if track_history:
+        return x, iterations
+    return x
+
+def steepest_descent(A, b, x0, tol=1e-6, max_iter=100, track_history=False):
+    """Solves a linear system Ax = b using the method of steepest descent."""
+    import numpy as np
+    x = x0.copy()
+    if track_history:
+        iterations = [x.copy()]
+        
+    for i in range(max_iter):
+        r = A @ x - b
+        if np.linalg.norm(r) < tol:
+            if track_history: print(f'Converged after {i+1} iterations.')
+            break
+        alpha = np.dot(r, r) / np.dot(r, A @ r)
+        x = x - alpha * r
+        if track_history:
+            iterations.append(x.copy())
+            
+    if track_history:
+        return x, iterations
+    return x
+
+def conjugate_gradient(A, b, x0, tol=1e-6, track_history=False):
+    """Wrapper around SciPy CG to track iterations if needed."""
+    import numpy as np
+    from scipy.sparse.linalg import cg
+    
+    if track_history:
+        iterations = [x0.copy()]
+        def callback(xk):
+            iterations.append(np.copy(xk))
+        solution, info = cg(A, b, x0=x0, tol=tol, callback=callback)
+        return solution, np.array(iterations)
+    else:
+        solution, info = cg(A, b, x0=x0, tol=tol)
+        return solution
